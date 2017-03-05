@@ -11,7 +11,10 @@ model.train(samples,responses)
 
 ############################# testing part  #########################
 
-im = cv2.imread('test/some_8.jpg')
+image_max = cv2.imread('test/some_8.jpg')
+print image_max.shape
+im = image_max[100:3204, 200:300] # Crop from x, y, w, h -> 100, 200, 300, 400
+
 out = np.zeros(im.shape,np.uint8)
 gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
 thresh = cv2.adaptiveThreshold(gray,255,1,1,11,2)
@@ -28,13 +31,15 @@ for cnt in contours:
             roismall = roismall.reshape((1,100))
             roismall = np.float32(roismall)
             retval, results, neigh_resp, dists = model.find_nearest(roismall, k = 1)
-            string = str(int((results[0][0])))
+            string = str(int((results[0][0])))  
             cv2.putText(out,string,(x,y+h),0,1,(0,255,0))
 
 #cv2.imshow('im',im)
-resized_im = cv2.resize(im, (800, 800)) 
-cv2.imshow("img", resized_im)
+resized_im = cv2.resize(im, (500, 500)) 
+cv2.imshow("img", im)
 
-resized_out = cv2.resize(out, (800,800))
-cv2.imshow("out",resized_out)
+resized_out = cv2.resize(out, (500,500))
+cv2.imshow("out",out)
+cv2.imwrite('test/output.png', out)
+
 cv2.waitKey(0)
